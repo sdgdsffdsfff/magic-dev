@@ -1,4 +1,4 @@
-var gulp         = require('gulp'),
+var gulp         = require('gulp-param')(require('gulp'), process.argv),
     del          = require("del"),
     gulpif       = require("gulp-if"),
     sass         = require("gulp-sass"),
@@ -8,13 +8,18 @@ var gulp         = require('gulp'),
     rename       = require("gulp-rename"),
     webpack      = require("gulp-webpack"),
     hash         = require("gulp-hash"),
+    browserSync  = require('browser-sync'),
+    reload       = browserSync.reload,
     concat       = require("gulp-concat");
 
 
-var DIR_MIXIN = __dirname + "/dev/mixin/",
-    DIR_MINJS = __dirname + "/dev/minjs/",
-    DIR_MAGIC = __dirname + "/dev/magic/";
+var DIR_APP       = __dirname + "/app/",
+    DIR_MIXIN     = __dirname + "/dev/mixin/",
+    DIR_MINJS     = __dirname + "/dev/minjs/",
+    DIR_MAGIC     = __dirname + "/dev/magic/",
+    DIR_MAGIC_VUE = __dirname + "/dev/magic-vue/";
 
+var release = false;    // 是否为发布输出，发布输出会压缩优化
 
 /* mixin 想关任务方法 */
 gulp.task("dev-mixin", function() {
@@ -47,31 +52,29 @@ gulp.task("clean.minjs", function() {
     del(DIR_MAGIC+"src/lib/minjs");
 })
 
+
 /* magic 相关任务方法 */
 gulp.task("dev-magic-css", function() {
-    del(DIR_MAGIC+"dist/magic-*.css");
-
-    return gulp.src(DIR_MAGIC+"src/core/main.scss")
+    gulp.src(DIR_MAGIC+"src/core/main.scss")
         .pipe(sass())
         .pipe(autoprefixer())
         .pipe(rename("magic.css"))
         .pipe(gulp.dest(DIR_MAGIC+"dist/"))
-        .pipe(minifycss())
-        .pipe(rename("magic.min.css"))
-        .pipe(gulp.dest(DIR_MAGIC+"dist/"))
-        .pipe(rename("magic.css"))
-        .pipe(hash({hashLength: 5}))
-        .pipe(rename({extname: ".min.css"}))
-        .pipe(gulp.dest(DIR_MAGIC+"dist/"))
+        .pipe(gulp.dest(DIR_APP+"pub/lib/"))
+
+    if (release /* 发布时才优化 */) {
+        gulp.src(DIR_MAGIC+"dist/magic.css")
+            .pipe(minifycss())
+            .pipe(rename("magic.min.css"))
+            .pipe(gulp.dest(DIR_MAGIC+"dist/"))
+    }
 })
 
 gulp.task("dev-magic-js", function() {
     var LIB_MINJS = DIR_MAGIC + "/src/lib/minjs/",
         DIR_CORE  = DIR_MAGIC + "/src/core/";
 
-    del("dist/magic-*.js");
-
-    return gulp.src(DIR_CORE + "main.js")
+    gulp.src(DIR_CORE + "main.js")
         .pipe(webpack({
                 entry: DIR_CORE + "main.js",
                 output: {
@@ -96,15 +99,56 @@ gulp.task("dev-magic-js", function() {
                 }
             }))
         .pipe(gulp.dest(DIR_MAGIC+"dist/"))
-        .pipe(uglify())
-        .pipe(rename("magic.min.js"))
-        .pipe(gulp.dest(DIR_MAGIC+"dist/"))
-        .pipe(rename("magic.js"))
-        .pipe(hash({hashLength: 5}))
-        .pipe(rename({extname: ".min.js"}))
-        .pipe(gulp.dest(DIR_MAGIC+"dist/"))
+        .pipe(gulp.dest(DIR_MAGIC_VUE+"src/lib/"))
+
+    if (release /* 发布时才优化 */) {
+        gulp.src(DIR_MAGIC+"dist/magic.js")
+            .pipe(uglify())
+            .pipe(rename("magic.min.js"))
+            .pipe(gulp.dest(DIR_MAGIC+"dist/"))
+    }
 })
 
 gulp.task("clean.magic", function() {
     del(DIR_MAGIC+"dist/magic*");
+})
+
+
+/* magic-vue 相关任务*/
+gulp.task("dev-magic-vue", function() {
+    var DIR_SRC = DIR_MAGIC_VUE + "/src/";
+
+    gulp.src(DIR_SRC+"main.js")
+        .pipe(webpack({
+                entry: DIR_SRC+"main.js",
+                output: {
+                    filename: "magic.vue.js"
+                },
+                module: {
+                    loaders: [
+                        { test: /\.html$/, loader: "html" },
+                        { test: /\.scss$/, loader: "style!css!sass!autoprefixer" }
+                    ]
+                }
+            }))
+        .pipe(gulp.dest(DIR_MAGIC_VUE+"dist/"))
+        .pipe(gulp.dest(DIR_APP+"pub/lib/"))
+
+    if (release /* 发布时才优化 */) {
+        gulp.src(DIR_MAGIC_VUE+"dist/magic.vue.js")
+            .pipe(uglify())
+            .pipe(rename("magic.vue.min.js"))
+            .pipe(gulp.dest(DIR_MAGIC_VUE+"dist/"))
+    }
+})
+
+gulp.task("clean.magic-vue", function() {
+    del(DIR_MAGIC_VUE+"dist/magic*");
+})
+
+/* 监控刷新调试 */
+gulp.task("serve", function() {
+    browserSync({
+        server: "./app/"
+    });
 })
