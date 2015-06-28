@@ -1,0 +1,32 @@
+{
+  "name": "magic-dev",
+  "version": "0.1.0",
+  "description": "magic app 框架开发预览版",
+  "repository": {
+    "type": "git",
+    "url": "https://git.coding.net/niluanxy/magic-dev.git"
+  },
+  "author": "木风 <smufeng@126.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "autoprefixer-loader": "^2.0.0",
+    "css-loader": "^0.14.5",
+    "del": "^1.2.0",
+    "gulp": "^3.9.0",
+    "gulp-autoprefixer": "^2.3.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-hash": "^2.0.4",
+    "gulp-if": "^1.2.5",
+    "gulp-minify-css": "^1.2.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^2.0.3",
+    "gulp-uglify": "^1.2.0",
+    "gulp-webpack": "^1.5.0",
+    "html-loader": "^0.3.0",
+    "node-libs-browser": "^0.5.2",
+    "node-sass": "^3.2.0",
+    "sass-loader": "^1.0.2",
+    "style-loader": "^0.12.3",
+    "webpack": "^1.10.0"
+  }
+}

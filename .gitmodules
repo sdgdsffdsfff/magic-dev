@@ -1,0 +1,12 @@
+[submodule "dev/mixin"]
+	path = dev/mixin
+	url = https://git.coding.net/niluanxy/mixin.git
+[submodule "dev/minjs"]
+	path = dev/minjs
+	url = https://git.coding.net/niluanxy/minjs.git
+[submodule "dev/magic"]
+	path = dev/magic
+	url = https://git.coding.net/niluanxy/magic.git
+[submodule "dev/magic-vue"]
+	path = dev/magic-vue
+	url = https://git.coding.net/niluanxy/magic-vue.git
