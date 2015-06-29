@@ -212,6 +212,21 @@ function task_dev_app_css() {
 }
 gulp.task("dev-app-css", task_dev_app_css);
 
+function task_dev_app_pub() {
+    var defer = Q.defer()
+
+    gulp.src([DIR_APP+"pub/**/*", "!"+DIR_APP+"pub/main*",
+              "!"+DIR_APP+"pub/lib/magic*",
+              "!"+DIR_APP+"pub/lib/mixin.scss"])
+    .pipe(gulp.dest(DIR_APP+"dist/pub/"))
+    .on("finish", function() {
+        defer.resolve()
+    })
+
+    return defer.promise
+}
+gulp.task("dev-app-pub", task_dev_app_pub);
+
 function task_dev_app_js() {
     var UglifyJsPlugin = require("webpack/lib/optimize/UglifyJsPlugin.js");
     var pugl = new UglifyJsPlugin({ sourceMap: false, mangle: false });
@@ -247,6 +262,7 @@ gulp.task("dev-app", function(rel) {
     release = rel ? true : false;
 
     return Q.all([
+        task_dev_app_pub(),
         task_dev_app_html(),
         task_dev_app_css(),
         task_dev_app_js()
@@ -279,6 +295,8 @@ gulp.task("serve", function() {
                 "app/pub/main.scss"], ["dev-app-css", reload])
     gulp.watch(["app/pub/lib/*.js", "app/page/**/*", "app/srvs/*.js",
                 "app/pub/main.js"], ["dev-app-js", reload])
+    gulp.watch(["app/pub/**/*", "!app/pub/main*", "!app/pub/lib/magic*",
+                "!app/pub/lib/mixin.scss"], ["dev-app-pub", reload])
 })
 
 /* 全局构建任务 */
