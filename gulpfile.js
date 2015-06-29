@@ -277,8 +277,8 @@ gulp.task("serve", function() {
     gulp.watch(["app/index.html"], ["dev-app-html", reload])
     gulp.watch(["app/pub/lib/*.css", "app/pub/lib/*.scss",
                 "app/pub/main.scss"], ["dev-app-css", reload])
-    gulp.watch(["app/pub/lib/*.js", "app/page/**/*", 
-                "app/srvs/*.js"], ["dev-app-js", reload])
+    gulp.watch(["app/pub/lib/*.js", "app/page/**/*", "app/srvs/*.js",
+                "app/pub/main.js"], ["dev-app-js", reload])
 })
 
 /* 全局构建任务 */
