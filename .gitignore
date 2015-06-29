@@ -7,9 +7,6 @@
 # APP目录忽略设置
 /app/dist/*
 /app/pub/app.css
-/app/pub/lib/magic.js
-/app/pub/lib/magic.vue.js
-/app/pub/lib/magic.css
 
 # DEV目录忽略设置
 
